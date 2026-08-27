@@ -1,36 +1,127 @@
-// Placeholder entrypoint — replace with the real app.
-// This just proves the container, Postgres connection, and ML service link all work.
 const express = require("express");
-const { Pool } = require("pg");
+const config = require("./src/config");
+const { pool } = require("./src/config/db");
+const {
+  notFoundHandler,
+  errorHandler
+} = require("./src/middleware/errorHandler");
+
+const authRoutes = require("./src/routes/auth.routes");
+const patientRoutes = require("./src/routes/patient.routes");
+const providerRoutes = require("./src/routes/provider.routes");
+const careRequestRoutes = require("./src/routes/careRequest.routes");
+const appointmentRoutes = require("./src/routes/appointment.routes");
+const reviewRoutes = require("./src/routes/review.routes");
 
 const app = express();
-const port = process.env.PORT || 3000;
+const port = config.port;
 
-const pool = new Pool({ connectionString: process.env.DATABASE_URL });
+app.use(express.json());
 
 app.get("/", (req, res) => {
-  res.json({ status: "ok", service: "nursing-care-lebnexis backend" });
+  res.json({
+    status: "ok",
+    service: "nursing-care-lebnexis backend"
+  });
 });
+
+
+// ===============================
+// Check Database Connection
+// ===============================
+
+const checkDatabaseConnection = async () => {
+  try {
+    const result = await pool.query("SELECT NOW()");
+
+    console.log("✅ PostgreSQL connected successfully");
+    console.log("🕐 Database time:", result.rows[0].now);
+
+  } catch (error) {
+    console.error("❌ PostgreSQL connection failed");
+    console.error("Error:", error.message);
+  }
+};
+
+
+// ===============================
+// Database Health Check
+// ===============================
 
 app.get("/health/db", async (req, res) => {
   try {
     const result = await pool.query("SELECT NOW()");
-    res.json({ db: "connected", time: result.rows[0].now });
+
+    res.json({
+      db: "connected",
+      time: result.rows[0].now
+    });
+
   } catch (err) {
-    res.status(500).json({ db: "error", message: err.message });
+    res.status(500).json({
+      db: "error",
+      message: err.message
+    });
   }
 });
+
+
+// ===============================
+// ML Health Check
+// ===============================
 
 app.get("/health/ml", async (req, res) => {
   try {
-    const response = await fetch(`${process.env.ML_SERVICE_URL}/health`);
+    const response = await fetch(
+      `${config.mlServiceUrl}/health`
+    );
+
     const data = await response.json();
-    res.json({ ml_service: "connected", data });
+
+    res.json({
+      ml_service: "connected",
+      data
+    });
+
   } catch (err) {
-    res.status(500).json({ ml_service: "error", message: err.message });
+    res.status(500).json({
+      ml_service: "error",
+      message: err.message
+    });
   }
 });
 
-app.listen(port, () => {
+
+// ===============================
+// API Routes
+// ===============================
+
+app.use("/api/auth", authRoutes);
+app.use("/api/patients", patientRoutes);
+app.use("/api/providers", providerRoutes);
+app.use("/api/care-requests", careRequestRoutes);
+app.use("/api/appointments", appointmentRoutes);
+app.use("/api/reviews", reviewRoutes);
+
+
+// ===============================
+// 404 + Error Handling
+// ===============================
+
+app.use(notFoundHandler);
+app.use(errorHandler);
+
+
+// ===============================
+// Start Server
+// ===============================
+
+app.listen(port, async () => {
   console.log(`Backend listening on port ${port}`);
+
+  // Check PostgreSQL connection
+  await checkDatabaseConnection();
 });
+
+
+module.exports = app;

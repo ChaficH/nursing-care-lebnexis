@@ -26,6 +26,8 @@ services:
       DATABASE_URL: postgres://${POSTGRES_USER:-lebnexis}:${POSTGRES_PASSWORD:-lebnexis}@postgres:5432/${POSTGRES_DB:-lebnexis_db}
       ML_SERVICE_URL: http://ml-backend:8000
       NODE_ENV: ${NODE_ENV:-development}
+      JWT_SECRET: ${JWT_SECRET:-change-me-in-production}
+      JWT_EXPIRES_IN: ${JWT_EXPIRES_IN:-12h}
     ports:
       - "${BACKEND_PORT:-3000}:3000"
     depends_on:
