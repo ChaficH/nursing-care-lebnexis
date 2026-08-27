@@ -1,0 +1,17 @@
+# Environment
+.env
+
+# Node
+backend/node_modules/
+npm-debug.log*
+
+# Python
+ml-backend/__pycache__/
+ml-backend/*.pyc
+ml-backend/.venv/
+
+# OS
+.DS_Store
+
+# Docker
+docker-compose.override.yml
