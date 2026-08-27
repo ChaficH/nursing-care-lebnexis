@@ -1,38 +1,226 @@
-# Smart Home Healthcare Platform (nursing-care-lebnexis)
+# Smart Home Healthcare Platform
 
-A platform that connects patients and families with home healthcare providers — nurses, physiotherapists, and mental health professionals — based on need, location, and availability.
+A web platform that connects patients and families with home healthcare providers such as nurses, physiotherapists, and mental health professionals.
 
-Built as part of the **LebNexis Career Launch – Web Development Program**.
+The platform uses patient requests, provider information, location, availability, and AI-assisted categorization to help connect patients with suitable home healthcare providers.
 
-## The problem
+> Built as part of the **LebNexis Career Launch – Web Development Program**.
 
-Families often don't know which caregiver they need, who's available nearby, or how to compare options. Meanwhile, qualified providers struggle to find patients in their area. This platform matches both sides.
+## How It Works
 
-## How it works
+The basic idea is:
 
-1. A patient (or family member) describes their situation in plain language.
-2. An AI service analyzes the description and suggests a relevant service category (e.g. physiotherapy, nursing) — it assists and triages, it does **not** diagnose.
-3. The platform matches the request against providers by service type, location, and availability.
-4. The patient reviews and requests a provider.
+**Patient describes their needs → AI helps categorize the request → suitable providers are found → patient requests a provider.**
 
-## MVP scope
+The AI is intended to assist with categorization and matching. It **does not diagnose medical conditions**.
 
-- Patient & provider registration/profiles
-- Patient request submission with AI-assisted categorization
-- Provider search & matching by service, location, and availability
-- Appointment requests (accept/reject)
-- Cash payments only for now (no online payments/insurance yet)
+## Planned Features
 
-## Tech stack (proposed)
+* Patient registration and profiles
+* Healthcare provider registration and profiles
+* Patient care requests
+* AI-assisted request categorization
+* Provider matching
+* Location-based matching
+* Provider availability
+* Appointment requests
+* Accept/reject appointment workflow
+* Cash payments for the initial MVP
 
-- **Frontend:** React / Next.js
-- **Backend:** Node.js and/or FastAPI (Python) for AI-heavy logic
-- **Database:** PostgreSQL
-- **AI:** External API (e.g. Gemini) for request analysis — not a custom-trained model
-- **Dev environment:** Docker (see `README.md` deployment section / `CONTRIBUTING.md`)
+## Tech Stack
 
-Nothing above is finalized yet — the team is still validating the idea and may adjust the stack.
+* **Frontend:** React / Next.js
+* **Backend:** Node.js / Express
+* **AI / ML:** Python / FastAPI
+* **Database:** PostgreSQL
+* **Development:** Docker / Docker Compose
+* **Version Control:** Git / GitHub
 
-## Status
+The stack may change as development continues.
 
-Early planning/validation stage. Idea submitted for approval; implementation begins after that. Not production-ready.
+## Project Structure
+
+```text
+nursing-care-lebnexis/
+│
+├── backend/                # Node.js / Express backend
+│   ├── Dockerfile
+│   ├── package.json
+│   └── index.js
+│
+├── ml-backend/             # Python / FastAPI service
+│   ├── Dockerfile
+│   ├── requirements.txt
+│   └── app.py
+│
+├── docker-compose.yml      # Runs the complete development environment
+├── .env.example            # Example environment variables
+├── .gitignore
+├── README.md
+└── CONTRIBUTING.md
+```
+
+## Running the Project
+
+You only need:
+
+* Git
+* Docker Desktop
+
+You **do not** need to install Node.js, Python, or PostgreSQL separately.
+
+### 1. Clone the repository
+
+```bash
+git clone https://github.com/ChaficH/nursing-care-lebnexis.git
+cd nursing-care-lebnexis
+```
+
+### 2. Create the environment file
+
+```bash
+cp .env.example .env
+```
+
+On Windows PowerShell, you can use:
+
+```powershell
+Copy-Item .env.example .env
+```
+
+### 3. Start Docker
+
+Make sure Docker Desktop is running, then:
+
+```bash
+docker compose up --build
+```
+
+The first build may take a few minutes.
+
+### 4. Services
+
+Once Docker is running:
+
+| Service    | Address               |
+| ---------- | --------------------- |
+| Backend    | http://localhost:3000 |
+| ML Service | http://localhost:8000 |
+| PostgreSQL | localhost:5432        |
+
+### 5. Test the services
+
+Backend:
+
+```text
+http://localhost:3000
+```
+
+Database connection:
+
+```text
+http://localhost:3000/health/db
+```
+
+ML service connection:
+
+```text
+http://localhost:3000/health/ml
+```
+
+ML service directly:
+
+```text
+http://localhost:8000/health
+```
+
+## Stopping Docker
+
+To stop the containers:
+
+```bash
+docker compose down
+```
+
+To completely reset the local database:
+
+```bash
+docker compose down -v
+```
+
+> `docker compose down -v` deletes the local PostgreSQL volume. Only use it when you intentionally want a fresh database.
+
+## Development
+
+Most of your work will happen inside one of these folders:
+
+```text
+backend/
+ml-backend/
+```
+
+For example:
+
+```text
+backend/index.js
+```
+
+contains the current backend entry point.
+
+The Python service is inside:
+
+```text
+ml-backend/
+```
+
+If a frontend is added later, it will have its own directory.
+
+### After changing normal code
+
+Usually you can simply save the file and continue developing.
+
+### After changing dependencies
+
+If you modify:
+
+```text
+backend/package.json
+```
+
+or:
+
+```text
+ml-backend/requirements.txt
+```
+
+rebuild the containers:
+
+```bash
+docker compose up --build
+```
+
+## Contributing
+
+Before making changes, read:
+
+**[CONTRIBUTING.md](CONTRIBUTING.md)**
+
+It explains:
+
+1. How to get the project running
+2. Where to edit files
+3. How to test your changes
+4. How to commit your changes
+5. How to push directly to `main`
+
+## Important
+
+* Never commit `.env`
+* Never commit API keys, passwords, or other secrets
+* Keep your changes related to the feature you are working on
+* Test your changes before pushing
+* If you are unsure where something belongs, ask the team before restructuring the project
+
+## Project Status
+
+This project is currently under active development and is **not production-ready**.
