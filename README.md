@@ -1,123 +1,38 @@
-# nursing-care-lebnexis
+# Smart Home Healthcare Platform (nursing-care-lebnexis)
 
-A nursing care platform with:
-- **`backend/`** — Node.js API
-- **`ml-backend/`** — Python ML service (FastAPI)
-- **PostgreSQL** — shared database
+A platform that connects patients and families with home healthcare providers — nurses, physiotherapists, and mental health professionals — based on need, location, and availability.
 
-All three run together via Docker Compose, so nobody needs to install Node, Python, or Postgres directly on their machine — just Docker.
+Built as part of the **LebNexis Career Launch – Web Development Program**.
 
----
+## The problem
 
-## Deploy locally on macOS (Terminal)
+Families often don't know which caregiver they need, who's available nearby, or how to compare options. Meanwhile, qualified providers struggle to find patients in their area. This platform matches both sides.
 
-### 1. Install Docker Desktop
+## How it works
 
-If you don't have it yet:
+1. A patient (or family member) describes their situation in plain language.
+2. An AI service analyzes the description and suggests a relevant service category (e.g. physiotherapy, nursing) — it assists and triages, it does **not** diagnose.
+3. The platform matches the request against providers by service type, location, and availability.
+4. The patient reviews and requests a provider.
 
-```bash
-brew install --cask docker
-```
+## MVP scope
 
-Then open the Docker app once from Spotlight/Applications so its engine starts (you'll see a whale icon in the menu bar). Alternatively, download it from https://www.docker.com/products/docker-desktop/.
+- Patient & provider registration/profiles
+- Patient request submission with AI-assisted categorization
+- Provider search & matching by service, location, and availability
+- Appointment requests (accept/reject)
+- Cash payments only for now (no online payments/insurance yet)
 
-Check it's running:
+## Tech stack (proposed)
 
-```bash
-docker --version
-docker compose version
-```
+- **Frontend:** React / Next.js
+- **Backend:** Node.js and/or FastAPI (Python) for AI-heavy logic
+- **Database:** PostgreSQL
+- **AI:** External API (e.g. Gemini) for request analysis — not a custom-trained model
+- **Dev environment:** Docker (see `README.md` deployment section / `CONTRIBUTING.md`)
 
-### 2. Clone the repo
+Nothing above is finalized yet — the team is still validating the idea and may adjust the stack.
 
-```bash
-git clone https://github.com/ChaficH/nursing-care-lebnexis.git
-cd nursing-care-lebnexis
-```
+## Status
 
-### 3. Create your `.env` file
-
-```bash
-cp .env.example .env
-```
-
-Open `.env` and adjust the Postgres credentials/ports if you want. The defaults work fine for local dev.
-
-### 4. Build and start everything
-
-```bash
-docker compose up --build
-```
-
-This builds the `backend` and `ml-backend` images and starts three containers: `lebnexis_postgres`, `lebnexis_backend`, and `lebnexis_ml_backend`.
-
-To run in the background instead:
-
-```bash
-docker compose up --build -d
-```
-
-### 5. Verify it's working
-
-- Backend: http://localhost:3000 → `{"status":"ok", ...}`
-- Backend → DB check: http://localhost:3000/health/db
-- Backend → ML service check: http://localhost:3000/health/ml
-- ML service: http://localhost:8000/health
-
-### 6. Everyday commands
-
-```bash
-docker compose up -d          # start in background
-docker compose down           # stop and remove containers (keeps DB data)
-docker compose down -v        # stop and wipe DB data too
-docker compose logs -f        # tail logs from all services
-docker compose logs -f backend
-docker compose restart backend
-docker compose exec backend sh          # shell into the Node container
-docker compose exec ml-backend bash     # shell into the Python container
-docker compose exec postgres psql -U lebnexis -d lebnexis_db   # psql prompt
-```
-
-### 7. Making code changes
-
-`backend/` and `ml-backend/` are mounted as live volumes, so editing files on your Mac is reflected in the containers immediately (Node/FastAPI both auto-reload). You generally won't need to rebuild unless you change `package.json` or `requirements.txt` — in that case:
-
-```bash
-docker compose up --build
-```
-
----
-
-## Project structure
-
-```
-nursing-care-lebnexis/
-├── docker-compose.yml
-├── .env.example
-├── backend/            # Node.js API
-│   ├── Dockerfile
-│   ├── package.json
-│   └── index.js
-└── ml-backend/         # Python ML service
-    ├── Dockerfile
-    ├── requirements.txt
-    └── app.py
-```
-
-The `index.js` and `app.py` files here are minimal placeholders wired up to Postgres and to each other — swap in the real application code as it's built.
-
----
-
-## Working with the database
-
-Postgres data persists in a Docker volume (`pgdata`) between restarts. To connect from a GUI tool (TablePlus, DBeaver, Postico, etc.), use:
-
-- Host: `localhost`
-- Port: `5432` (or `POSTGRES_PORT` from your `.env`)
-- User/Password/DB: whatever you set in `.env`
-
----
-
-## Sharing this with collaborators
-
-See **[CONTRIBUTING.md](./CONTRIBUTING.md)** for a friend-facing guide on forking the repo and running it with Docker on their own machine (Mac, Windows, or Linux).
+Early planning/validation stage. Idea submitted for approval; implementation begins after that. Not production-ready.
