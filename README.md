@@ -1,4 +1,3 @@
-````markdown
 # 🏠 Smart Home Healthcare Platform
 
 > **Connecting people with trusted care, right at home.**
