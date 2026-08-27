@@ -1,3 +1,4 @@
+````markdown
 # Smart Home Healthcare Platform
 
 A web platform that connects patients and families with home healthcare providers such as nurses, physiotherapists, and mental health professionals.
@@ -18,27 +19,27 @@ The AI assists with categorization and matching. It **does not diagnose medical 
 
 ## Planned Features
 
-* Patient registration and profiles
-* Healthcare provider registration and profiles
-* Patient care requests
-* AI-assisted request categorization
-* Provider matching
-* Location-based matching
-* Provider availability
-* Appointment requests
-* Accept/reject appointment workflow
-* Cash payments for the initial MVP
+- Patient registration and profiles
+- Healthcare provider registration and profiles
+- Patient care requests
+- AI-assisted request categorization
+- Provider matching
+- Location-based matching
+- Provider availability
+- Appointment requests
+- Accept/reject appointment workflow
+- Cash payments for the initial MVP
 
 ---
 
 ## Tech Stack
 
-* **Frontend:** React / Next.js
-* **Backend:** Node.js / Express
-* **AI / ML:** Python / FastAPI
-* **Database:** PostgreSQL
-* **Development:** Docker / Docker Compose
-* **Version Control:** Git / GitHub
+- **Frontend:** React / Next.js
+- **Backend:** Node.js / Express
+- **AI / ML:** Python / FastAPI
+- **Database:** PostgreSQL
+- **Development:** Docker / Docker Compose
+- **Version Control:** Git / GitHub
 
 The stack may change as development continues.
 
@@ -48,14 +49,14 @@ The stack may change as development continues.
 
 ## Requirements
 
-Install these two things:
+You only need:
 
-* Git
-* Docker Desktop
+- Git
+- Docker Desktop
 
-You **do not** need to install Node.js, Python, or PostgreSQL separately.
+You **do not need to install Node.js, Python, or PostgreSQL separately**.
 
-Docker handles the development environment for you.
+Docker handles the development environment.
 
 ---
 
@@ -66,13 +67,13 @@ Open your terminal and run:
 ```bash
 git clone https://github.com/ChaficH/nursing-care-lebnexis.git
 cd nursing-care-lebnexis
-```
+````
 
 ---
 
 ## 2. Create Your Environment File
 
-Create your local `.env` file from the example:
+Create your local `.env` file from the example.
 
 ### macOS / Linux / Git Bash
 
@@ -86,29 +87,51 @@ cp .env.example .env
 Copy-Item .env.example .env
 ```
 
-Do **not** commit your `.env` file to GitHub.
+Do **not** commit `.env` to GitHub.
 
 ---
 
 ## 3. Start the Project
 
-Make sure Docker Desktop is running.
+Make sure **Docker Desktop is running**.
 
-Then run:
+Run:
 
 ```bash
-docker compose up --build
+docker compose up --build -d
 ```
 
-The first time you run this, Docker will download the required images and build the services. This can take a few minutes.
+The `-d` runs Docker in the background so you can continue using your terminal.
 
-Once everything starts, the project will have three services:
+The first time you run this, Docker will download the required images and build the services. This may take a few minutes.
+
+The project contains three services:
 
 ```text
 Backend       → http://localhost:3000
 ML Service    → http://localhost:8000
 PostgreSQL    → localhost:5432
 ```
+
+---
+
+## 4. Check the Containers
+
+Run:
+
+```bash
+docker compose ps
+```
+
+You should see:
+
+```text
+lebnexis_backend
+lebnexis_ml_backend
+lebnexis_postgres
+```
+
+The PostgreSQL container should show as **healthy**.
 
 ---
 
@@ -122,7 +145,7 @@ Open:
 http://localhost:3000
 ```
 
-### Database connection
+### Database
 
 Open:
 
@@ -130,7 +153,7 @@ Open:
 http://localhost:3000/health/db
 ```
 
-### ML service
+### ML Service
 
 Open:
 
@@ -138,7 +161,7 @@ Open:
 http://localhost:8000/health
 ```
 
-### ML service through the backend
+### ML Service Through Backend
 
 Open:
 
@@ -147,6 +170,46 @@ http://localhost:3000/health/ml
 ```
 
 If these services respond correctly, your local environment is working.
+
+---
+
+# Viewing Docker Logs
+
+Because Docker runs in the background, you can view the logs whenever needed.
+
+### All services
+
+```bash
+docker compose logs -f
+```
+
+### Backend only
+
+```bash
+docker compose logs -f backend
+```
+
+### ML service only
+
+```bash
+docker compose logs -f ml-backend
+```
+
+### PostgreSQL only
+
+```bash
+docker compose logs -f postgres
+```
+
+Press:
+
+```text
+Ctrl + C
+```
+
+to stop viewing the logs.
+
+**This does not stop the containers.**
 
 ---
 
@@ -177,12 +240,6 @@ This is the Node.js / Express backend.
 
 Most backend development will happen here.
 
-For example:
-
-```text
-backend/index.js
-```
-
 ### `ml-backend/`
 
 This is the Python / FastAPI service.
@@ -211,7 +268,7 @@ code .
 
 Then edit the files you need.
 
-### Backend changes
+### Backend
 
 Work inside:
 
@@ -219,7 +276,7 @@ Work inside:
 backend/
 ```
 
-### AI / ML changes
+### AI / ML
 
 Work inside:
 
@@ -227,7 +284,7 @@ Work inside:
 ml-backend/
 ```
 
-### Docker changes
+### Docker
 
 Edit:
 
@@ -241,13 +298,19 @@ Only modify Docker configuration when necessary.
 
 # Do I Need to Rebuild Docker?
 
-### Normal code changes
+## Normal Code Changes
 
-For normal changes to `.js` or `.py` files, you generally do **not** need to rebuild the images.
+For normal `.js` or `.py` changes, you generally **do not need to rebuild**.
 
-Just save your changes and restart the relevant service if necessary.
+Save your changes. The development containers are configured to detect code changes.
 
-### Dependency changes
+If necessary, restart the services:
+
+```bash
+docker compose restart
+```
+
+## Dependency Changes
 
 If you change:
 
@@ -261,23 +324,25 @@ or:
 ml-backend/requirements.txt
 ```
 
-rebuild Docker:
+rebuild the containers:
 
 ```bash
-docker compose up --build
+docker compose up --build -d
 ```
 
 ---
 
 # Git Workflow
 
-Everyone on the team should have **Write access** to the repository.
+Everyone on the team has **Write access** to the repository.
 
-The workflow is simple:
+The basic workflow is:
 
 ```text
 Pull → Edit → Test → Commit → Pull → Push
 ```
+
+---
 
 ## Before Starting Work
 
@@ -289,7 +354,11 @@ git pull origin main
 
 ---
 
-## After Making Changes
+## Make Your Changes
+
+Edit the files you need.
+
+Test the application with Docker.
 
 Check what changed:
 
@@ -305,15 +374,15 @@ git diff
 
 ---
 
-## Save Your Changes
+## Commit Your Changes
 
-Add the files:
+Add your changes:
 
 ```bash
 git add .
 ```
 
-Then create a commit:
+Create a commit:
 
 ```bash
 git commit -m "Describe what you changed"
@@ -339,7 +408,7 @@ Keep commit messages short and descriptive.
 
 # Push Your Changes to GitHub
 
-Before pushing, make sure nobody else pushed changes while you were working:
+Before pushing, get any changes that teammates may have made:
 
 ```bash
 git pull --rebase origin main
@@ -355,16 +424,16 @@ Your changes are now on GitHub.
 
 ---
 
-# The Full Workflow
+# Everyday Workflow
 
-For everyday development, you can follow this:
+For normal development:
 
 ```bash
 # Get the latest code
 git pull origin main
 
-# Start the project
-docker compose up --build
+# Start Docker
+docker compose up -d
 
 # Make your changes...
 
@@ -376,20 +445,30 @@ git diff
 git add .
 git commit -m "Describe what you changed"
 
-# Get any changes made by teammates
+# Get changes from teammates
 git pull --rebase origin main
 
-# Push to GitHub
+# Push
 git push origin main
 ```
 
-That's it.
+If you changed dependencies, use:
+
+```bash
+docker compose up --build -d
+```
+
+instead of:
+
+```bash
+docker compose up -d
+```
 
 ---
 
 # If There Is a Git Conflict
 
-If Git tells you there is a conflict, **don't force anything**.
+If Git reports a conflict, **don't force anything**.
 
 Run:
 
@@ -397,7 +476,7 @@ Run:
 git status
 ```
 
-Git will show you which files have conflicts.
+Git will show which files have conflicts.
 
 If you are not sure how to resolve them, ask the team before continuing.
 
@@ -405,23 +484,39 @@ If you are not sure how to resolve them, ask the team before continuing.
 
 # Stopping Docker
 
-To stop the project:
+To stop the containers:
 
 ```bash
 docker compose down
 ```
 
-Your PostgreSQL data will normally remain stored in the Docker volume.
+Your PostgreSQL data normally remains stored in the Docker volume.
 
-### Reset the database completely
+To start everything again:
+
+```bash
+docker compose up -d
+```
+
+---
+
+# Reset the Database
+
+If you intentionally want to delete your local database and start fresh:
 
 ```bash
 docker compose down -v
 ```
 
-**Warning:** this deletes the local PostgreSQL data.
+Then:
 
-Only use this if you intentionally want to start with a fresh database.
+```bash
+docker compose up --build -d
+```
+
+⚠️ **Warning:** `docker compose down -v` deletes the local PostgreSQL Docker volume and all local database data.
+
+Only use this if you intentionally want a fresh database.
 
 ---
 
@@ -431,7 +526,7 @@ Only use this if you intentionally want to start with a fresh database.
 * Never commit API keys or passwords
 * Always pull the latest `main` before starting
 * Test your changes before pushing
-* Keep your commits descriptive
+* Keep commits descriptive
 * Don't overwrite another teammate's work
 * If you change dependencies, rebuild Docker
 * Ask the team before making major architectural changes
@@ -441,3 +536,8 @@ Only use this if you intentionally want to start with a fresh database.
 # Project Status
 
 This project is currently under active development and is **not production-ready**.
+
+```
+
+After pasting it into `README.md`, save it and run `git add README.md && git commit -m "Update README setup guide" && git push origin main`.
+```
